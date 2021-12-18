@@ -33,31 +33,38 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    });
 
-Route::get('/', function () {
-    return view('admin.dashboard');
+    Route::group(['prefix' => 'cabang'], function (){
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\CabangController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\CabangController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\CabangController::class, 'hapus']);
+    });
+
+    Route::group(['prefix' => 'jenis'], function (){
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\JenisBarangController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\JenisBarangController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\JenisBarangController::class, 'hapus']);
+    });
+
+    Route::group(['prefix' => 'barang'], function (){
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\BarangController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\BarangController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\BarangController::class, 'hapus']);
+    });
+
 });
 
 
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-});
-
-Route::get('/admin/cabang', function () {
-    return view('admin.cabang');
-});
-
-Route::get('/admin/jenis', function () {
-    return view('admin.jenisbarang');
-});
 
 Route::get('/admin/admin', function () {
     return view('admin.admin');
 });
 
-Route::get('/admin/barang', function () {
-    return view('admin.barang');
-});
+
 
 Route::get('/admin/stock', function () {
     return view('admin.stok');

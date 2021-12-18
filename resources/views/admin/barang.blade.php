@@ -11,9 +11,7 @@
             swal("Berhasil!", "Berhasil Menambah data!", "success");
         </script>
     @endif
-
     <section class="m-2">
-
 
         <div class="table-container">
 
@@ -27,39 +25,69 @@
 
             <table class="table table-striped table-bordered ">
                 <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nama Barang</th>
-                        <th>Jenis Barang</th>
-                        <th>Harga</th>
-                        <th>Satuan</th>
-                        <th>Action</th>
-                    </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Nama Barang</th>
+                    <th>Jenis Barang</th>
+                    <th>Harga</th>
+                    <th>Satuan</th>
+                    <th>Gambar</th>
+                    <th>Action</th>
+                </tr>
                 </thead>
 
-                <tr>
-                    <td>1</td>
-                    <td>Joni</td>
-                    <td>Jenis A</td>
-                    <td>Rp 50.000</td>
-                    <td>Meter</td>
-                    <td>
-                        <a target="_blank"
-                            href="https://storage.googleapis.com/finansialku_media/wordpress_media/2020/01/50a970a6-7-contoh-surat-pengantar-untuk-berbagai-keperluan-05-surat-pengantar-laporan-finansialku.jpg">
-                            <img src="https://storage.googleapis.com/finansialku_media/wordpress_media/2020/01/50a970a6-7-contoh-surat-pengantar-untuk-berbagai-keperluan-05-surat-pengantar-laporan-finansialku.jpg"
-                                style="width: 75px; height: 100px; object-fit: cover" />
-                        </a>
-
-
-                    </td>
-
-                    <td style="width: 150px">
-                        <button type="button" class="btn btn-success btn-sm" id="editData">Ubah</button>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="hapus('id', 'nama') ">hapus</button>
-                    </td>
-                </tr>
-
-
+                <tbody>
+                @forelse($data as $v)
+                    <tr>
+                        <td>
+                            {{ $loop->index + 1 }}
+                        </td>
+                        <td>
+                            {{ $v->nama }}
+                        </td>
+                        <td>
+                            {{ $v->jenis->nama }}
+                        </td>
+                        <td>
+                            Rp. {{ number_format($v->harga, 0, ',', '.') }}
+                        </td>
+                        <td>
+                            {{ $v->satuan }}
+                        </td>
+                        <td>
+                            @if($v->gambar !== null)
+                                <a target="_blank"
+                                   href="{{ asset($v->gambar) }}">
+                                    <img
+                                        src="{{ asset($v->gambar) }}"
+                                        alt="Gambar Produk"
+                                        style="width: 75px; height: 100px; object-fit: cover"/>
+                                </a>
+                            @else
+                                Belum Ada Gambar
+                            @endif
+                        </td>
+                        <td style="width: 150px">
+                            <button type="button" class="btn btn-success btn-sm btn-edit"
+                                    data-id="{{ $v->id }}"
+                                    data-nama="{{ $v->nama }}"
+                                    data-jenis="{{ $v->jenis->id }}"
+                                    data-harga="{{ $v->harga }}"
+                                    data-satuan="{{ $v->satuan }}"
+                            >Ubah
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $v->id }}">hapus
+                            </button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td class="text-center" colspan="7">
+                            Tidak Ada Data Barang
+                        </td>
+                    </tr>
+                @endforelse
+                </tbody>
             </table>
 
         </div>
@@ -75,17 +103,16 @@
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Tambah Barang</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                                    aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="form" onsubmit="return save()">
+                            <form method="post" enctype="multipart/form-data">
                                 @csrf
-                                <input id="id" name="id" hidden>
                                 <div class="mb-3">
                                     <label for="nama" class="form-label">Nama Barang</label>
                                     <input type="text" required class="form-control" id="nama" name="nama">
                                 </div>
-                                
+
                                 <div class="mb-3">
                                     <label for="satuan" class="form-label">Satuan</label>
                                     <input type="text" required class="form-control" id="satuan" name="satuan">
@@ -94,27 +121,25 @@
                                 <div class="mb-3">
                                     <label for="kategori" class="form-label">Jenis Barang</label>
                                     <div class="d-flex">
-                                        <select class="form-select me-2" aria-label="Default select example" id="selectStatus"
-                                            name="status">
-                                            <option selected value="null">Jenis Barang</option>
-                                            <option value="11">Jenis A</option>
-                                            <option value="11">Jenis B</option>
+                                        <select class="form-select me-2" aria-label="Default select example"
+                                                id="jenis_barang"
+                                                name="jenis_barang">
+                                            @foreach($jenis as $j)
+                                                <option value="{{ $j->id }}">{{ $j->nama }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
-
-
                                 <div class="mb-3">
                                     <label for="harga" class="form-label">Harga</label>
                                     <input type="number" required class="form-control" id="harga" name="harga">
                                 </div>
-                                
+
                                 <div class="mt-3 mb-2">
-                                    <label for="foto" class="form-label">Foto Produk</label>
-                                    <input class="form-control" type="file" id="foto" name="foto_produk">
+                                    <label for="gambar" class="form-label">Foto Produk</label>
+                                    <input class="form-control" type="file" id="gambar" name="gambar">
                                     <div id="showFoto"></div>
                                 </div>
-
                                 <div class="mb-4"></div>
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                             </form>
@@ -132,11 +157,11 @@
 
 @section('script')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
         })
 
-        $(document).on('click', '#editData, #addData', function() {
+        $(document).on('click', '#editData, #addData', function () {
             $('#modal #id').val($(this).data('id'))
             $('#modal #nama').val($(this).data('nama'))
             $('#modal #nphp').val($(this).data('hp'))
@@ -167,12 +192,12 @@
 
         function hapus(id, name) {
             swal({
-                    title: "Menghapus data?",
-                    text: "Apa kamu yakin, ingin menghapus data ?!",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
+                title: "Menghapus data?",
+                text: "Apa kamu yakin, ingin menghapus data ?!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
                 .then((willDelete) => {
                     if (willDelete) {
                         swal("Berhasil Menghapus data!", {
