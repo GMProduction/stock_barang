@@ -44,6 +44,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [\App\Http\Controllers\CabangController::class, 'hapus']);
     });
 
+    Route::group(['prefix' => 'admin'], function (){
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\AdminController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\AdminController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\AdminController::class, 'hapus']);
+    });
+
     Route::group(['prefix' => 'jenis'], function (){
         Route::match(['post', 'get'], '/', [\App\Http\Controllers\JenisBarangController::class, 'index']);
         Route::post('/patch', [\App\Http\Controllers\JenisBarangController::class, 'patch']);
@@ -60,9 +66,7 @@ Route::group(['prefix' => 'admin'], function () {
 
 
 
-Route::get('/admin/admin', function () {
-    return view('admin.admin');
-});
+
 
 
 

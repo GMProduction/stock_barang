@@ -43,18 +43,28 @@ class BarangController extends CustomController
 
     public function patch()
     {
-        $jenis = JenisBarang::find($this->postField('id-edit'));
+        $barang = Barang::find($this->postField('id-edit'));
+        $nama = $this->postField('nama-edit');
         $data = [
-            'nama' => $this->postField('nama-edit'),
+            'nama' => $nama,
+            'satuan' => $this->postField('satuan-edit'),
+            'harga' => $this->postField('harga-edit'),
+            'jenis_barang_id' => $this->postField('jenis_barang-edit'),
         ];
-        $jenis->update($data);
+        if ($gambar = $this->request->file('gambar-edit')) {
+            $ext = $gambar->getClientOriginalExtension();
+            $photoTarget = uniqid( 'image-') . '.' . $ext;
+            $data['gambar'] = '/gambar/' . $photoTarget;
+            $this->uploadImage('gambar-edit', $photoTarget, 'gambar');
+        }
+        $barang->update($data);
         return redirect()->back()->with('success');
     }
 
     public function hapus()
     {
         try {
-            JenisBarang::destroy($this->postField('id'));
+            Barang::destroy($this->postField('id'));
             return response()->json([
                 'msg' => 'success'
             ], 200);

@@ -76,7 +76,7 @@
                                     data-satuan="{{ $v->satuan }}"
                             >Ubah
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $v->id }}">hapus
+                            <button type="button" class="btn btn-danger btn-sm btn-hapus" data-id="{{ $v->id }}">hapus
                             </button>
                         </td>
                     </tr>
@@ -94,8 +94,6 @@
 
 
         <div>
-
-
             <!-- Modal Tambah-->
             <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -149,6 +147,58 @@
                 </div>
             </div>
 
+            <div class="modal fade" id="modal-edit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Tambah Barang</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="/admin/barang/patch" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" id="id-edit" name="id-edit">
+                                <div class="mb-3">
+                                    <label for="nama-edit" class="form-label">Nama Barang</label>
+                                    <input type="text" required class="form-control" id="nama-edit" name="nama-edit">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="satuan-edit" class="form-label">Satuan</label>
+                                    <input type="text" required class="form-control" id="satuan-edit" name="satuan-edit">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="jenis_barang-edit" class="form-label">Jenis Barang</label>
+                                    <div class="d-flex">
+                                        <select class="form-select me-2" aria-label="Default select example"
+                                                id="jenis_barang-edit"
+                                                name="jenis_barang-edit">
+                                            @foreach($jenis as $j)
+                                                <option value="{{ $j->id }}">{{ $j->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="harga-edit" class="form-label">Harga</label>
+                                    <input type="number" required class="form-control" id="harga-edit" name="harga-edit">
+                                </div>
+
+                                <div class="mt-3 mb-2">
+                                    <label for="gambar-edit" class="form-label">Foto Produk</label>
+                                    <input class="form-control" type="file" id="gambar-edit" name="gambar-edit">
+                                    <div id="showFoto"></div>
+                                </div>
+                                <div class="mb-4"></div>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
     </section>
@@ -158,36 +208,35 @@
 @section('script')
     <script>
         $(document).ready(function () {
+            $('.btn-edit').on('click', function () {
+                $('#id-edit').val(this.dataset.id);
+                $('#nama-edit').val(this.dataset.nama);
+                $('#satuan-edit').val(this.dataset.satuan);
+                $('#harga-edit').val(this.dataset.harga);
+                $('#jenis_barang-edit').val(this.dataset.jenis);
+                $('#modal-edit').modal('show')
+            });
 
-        })
+            $('.btn-hapus').on('click', function () {
+                hapus(this.dataset.id)
+            })
+        });
 
-        $(document).on('click', '#editData, #addData', function () {
-            $('#modal #id').val($(this).data('id'))
-            $('#modal #nama').val($(this).data('nama'))
-            $('#modal #nphp').val($(this).data('hp'))
-            $('#modal #alamat').val($(this).data('alamat'))
-            $('#modal #no_ktp').val($(this).data('ktp'))
-            $('#modal #username').val($(this).data('username'))
-            $('#modal #password').val('')
-            $('#modal #password-confirmation').val('')
-            $('#showFoto').empty();
-            if ($(this).data('id')) {
-                $('#modal #password').val('**********')
-                $('#modal #password-confirmation').val('**********')
+        async function destroy(id) {
+            try {
+                let response = await $.post('/admin/barang/delete', {
+                    _token: '{{ csrf_token() }}',
+                    id: id
+                });
+                swal("Berhasil Menghapus data!", {
+                    icon: "success",
+                });
+                window.location.reload();
+                console.log(response)
+            } catch (e) {
+                console.log(e);
+                alert('gagal')
             }
-            if ($(this).data('foto')) {
-                $('#showFoto').html('<img src="' + $(this).data('foto') + '" height="50">')
-            }
-            $('#modal').modal('show')
-        })
-
-        function save() {
-            saveData('Simpan Data', 'form');
-            return false;
-        }
-
-        function after() {
-
         }
 
         function hapus(id, name) {
@@ -200,9 +249,7 @@
             })
                 .then((willDelete) => {
                     if (willDelete) {
-                        swal("Berhasil Menghapus data!", {
-                            icon: "success",
-                        });
+                        destroy(id);
                     } else {
                         swal("Data belum terhapus");
                     }
