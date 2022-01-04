@@ -94,6 +94,10 @@ class CustomController extends Controller
         return $this->request->query->get($key);
     }
 
+    public function postJsonField() {
+        return json_decode($this->request->getContent());
+    }
+
     public function jsonResponse($msg = '', $status = 200, $data = null)
     {
         return response()->json([
@@ -128,5 +132,14 @@ class CustomController extends Controller
         $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($html);
         return $pdf->stream();
+    }
+
+    public function tryJsonResponse($function)
+    {
+        try {
+            $function();
+        }catch (\Exception $e) {
+            return $this->jsonFailedResponse($e->getMessage());
+        }
     }
 }

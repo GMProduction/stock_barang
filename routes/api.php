@@ -14,6 +14,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
+});
+
+Route::group(['prefix' => 'barang', 'middleware' => 'auth:api'], function () {
+    Route::get('/', [\App\Http\Controllers\Api\BarangController::class, 'index']);
+    Route::get('/{id}', [\App\Http\Controllers\Api\BarangController::class, 'detail']);
+});
+
+Route::group(['prefix' => 'barang-keluar', 'middleware' => 'auth:api'], function () {
+    Route::match(['post'], '/', [\App\Http\Controllers\Api\BarangKeluarController::class, 'index']);
+    Route::get('/{id}', [\App\Http\Controllers\Api\BarangController::class, 'detail']);
 });
