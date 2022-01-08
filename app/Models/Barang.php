@@ -22,4 +22,9 @@ class Barang extends Model
     {
         return $this->belongsTo(JenisBarang::class, 'jenis_barang_id');
     }
+
+    public function stock()
+    {
+        return $this->hasOne(Stock::class, 'barang_id');
+    }
 }
