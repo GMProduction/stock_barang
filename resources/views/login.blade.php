@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
@@ -33,13 +33,15 @@
 						</div>
 					<h3 class="text-logo">Login sebagai admin</h3>
 					<br>
-					<form class="text-center">
-						<input class="form-control border-0" type="" name="" placeholder="Type Your Username">
+					<form class="text-center" method="post">
+                        @csrf
+                        <input class="form-control border-0" type="text" name="username"
+                               placeholder="Type Your Username">
 						<br>
-						<input class="form-control border-0" type="" name="" placeholder="Type Your Password">
+                        <input class="form-control border-0" type="password" name="password"
+                               placeholder="Type Your Password">
 						<br>
 						<button class="btn btn-primary btn-sm border-0" type="submit" name="submit">Login</button>
-						<span class="d-block mt-2">New to HI UDB? <a class="ms-2 link" href="/register-page">Create an account.</a></span>
 					</form>
 					</div>
 

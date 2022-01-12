@@ -40,7 +40,7 @@
     <div class="side-navbar active-nav d-flex justify-content-between  flex-wrap flex-column" id="sidebar">
         <ul class="nav flex-column text-white w-100 h-100">
             <a href="#" class="nav-link h5 text-white my-2">
-                Hi, Joko (Admin)
+                Hi, {{ auth()->user()->username }} ({{ auth()->user()->cabang->nama }})
             </a>
 
             {{-- ADMIN PUSAT ONLY --}}
@@ -76,7 +76,7 @@
                 </li>
             </a>
 
-{{--           
+{{--
 
             <a href="/admin/transaksi">
                 <li href="#" class="nav-link t-white">
@@ -96,6 +96,19 @@
                 <li href="#" class="nav-link t-white">
                     <i class='bx bx-package'></i>
                     <span class="mx-2">Stok Barang</span>
+                </li>
+            </a>
+
+            <a href="/admin/laporan-barang-masuk">
+                <li href="#" class="nav-link t-white">
+                    <i class='bx bx-package'></i>
+                    <span class="mx-2">Laporan Barang Masuk</span>
+                </li>
+            </a>
+            <a href="/admin/laporan-barang-keluar">
+                <li href="#" class="nav-link t-white">
+                    <i class='bx bx-package'></i>
+                    <span class="mx-2">Laporan Barang Keluar</span>
                 </li>
             </a>
 

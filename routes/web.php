@@ -33,46 +33,61 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::match(['get', 'post'],'/', [AuthController::class, 'index']);
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/', function () {
         return view('admin.dashboard');
     });
 
-    Route::group(['prefix' => 'cabang'], function (){
+    Route::group(['prefix' => 'cabang'], function () {
         Route::match(['post', 'get'], '/', [\App\Http\Controllers\CabangController::class, 'index']);
         Route::post('/patch', [\App\Http\Controllers\CabangController::class, 'patch']);
         Route::post('/delete', [\App\Http\Controllers\CabangController::class, 'hapus']);
     });
 
-    Route::group(['prefix' => 'admin'], function (){
+    Route::group(['prefix' => 'admin'], function () {
         Route::match(['post', 'get'], '/', [\App\Http\Controllers\AdminController::class, 'index']);
         Route::post('/patch', [\App\Http\Controllers\AdminController::class, 'patch']);
         Route::post('/delete', [\App\Http\Controllers\AdminController::class, 'hapus']);
     });
 
-    Route::group(['prefix' => 'jenis'], function (){
+    Route::group(['prefix' => 'jenis'], function () {
         Route::match(['post', 'get'], '/', [\App\Http\Controllers\JenisBarangController::class, 'index']);
         Route::post('/patch', [\App\Http\Controllers\JenisBarangController::class, 'patch']);
         Route::post('/delete', [\App\Http\Controllers\JenisBarangController::class, 'hapus']);
     });
 
-    Route::group(['prefix' => 'barang'], function (){
+    Route::group(['prefix' => 'barang'], function () {
         Route::match(['post', 'get'], '/', [\App\Http\Controllers\BarangController::class, 'index']);
         Route::post('/patch', [\App\Http\Controllers\BarangController::class, 'patch']);
         Route::post('/delete', [\App\Http\Controllers\BarangController::class, 'hapus']);
     });
 
+    Route::group(['prefix' => 'stock'], function (){
+        Route::get('/', [\App\Http\Controllers\StockController::class, 'index']);
+        Route::get('/list', [\App\Http\Controllers\StockController::class, 'getList']);
+    });
+
+    Route::group(['prefix' => 'laporan-barang-masuk'], function (){
+        Route::get('/', [\App\Http\Controllers\LaporanController::class, 'laporanBarangMasukPage']);
+        Route::get('/list', [\App\Http\Controllers\LaporanController::class, 'laporanBarangMasukList']);
+        Route::get('/print', [\App\Http\Controllers\LaporanController::class, 'laporanBarangMasukPrint']);
+    });
+
+    Route::group(['prefix' => 'laporan-barang-keluar'], function (){
+        Route::get('/', [\App\Http\Controllers\LaporanController::class, 'laporanBarangKeluarPage']);
+        Route::get('/list', [\App\Http\Controllers\LaporanController::class, 'laporanBarangKeluarList']);
+        Route::get('/print', [\App\Http\Controllers\LaporanController::class, 'laporanBarangKeluarPrint']);
+    });
+
+
+
 });
 
 
-
-
-
-
-
-Route::get('/admin/stock', function () {
-    return view('admin.stok');
-});
+//Route::get('/admin/stock', function () {
+//    return view('admin.stok');
+//});
 
 Route::get('/admin/transaksi', function () {
     return view('admin.transaksi');
