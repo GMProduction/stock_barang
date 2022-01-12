@@ -28,6 +28,9 @@ Route::group(['prefix' => 'barang', 'middleware' => 'auth:api'], function () {
 });
 
 Route::group(['prefix' => 'barang-keluar', 'middleware' => 'auth:api'], function () {
-    Route::match(['post'], '/', [\App\Http\Controllers\Api\BarangKeluarController::class, 'index']);
-    Route::get('/{id}', [\App\Http\Controllers\Api\BarangController::class, 'detail']);
+    Route::match(['post', 'get'], '/', [\App\Http\Controllers\Api\BarangKeluarController::class, 'index']);
+});
+
+Route::group(['prefix' => 'barang-masuk', 'middleware' => 'auth:api'], function () {
+    Route::match(['post', 'get'], '/', [\App\Http\Controllers\Api\BarangMasukController::class, 'index']);
 });
