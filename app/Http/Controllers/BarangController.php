@@ -7,6 +7,8 @@ namespace App\Http\Controllers;
 use App\Helper\CustomController;
 use App\Models\Barang;
 use App\Models\JenisBarang;
+use Milon\Barcode\DNS1D;
+use Milon\Barcode\DNS2D;
 
 class BarangController extends CustomController
 {
@@ -21,7 +23,7 @@ class BarangController extends CustomController
             $nama = $this->postField('nama');
             $data = [
                 'nama' => $nama,
-                'barcode' => uniqid(),
+                'barcode' => rand(1000000000, 9999999999),
                 'satuan' => $this->postField('satuan'),
                 'harga' => $this->postField('harga'),
                 'jenis_barang_id' => $this->postField('jenis_barang'),

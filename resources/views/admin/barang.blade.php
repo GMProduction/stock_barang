@@ -22,7 +22,6 @@
                 </button>
             </div>
 
-
             <table class="table table-striped table-bordered ">
                 <thead>
                 <tr>
@@ -32,6 +31,7 @@
                     <th>Harga</th>
                     <th>Satuan</th>
                     <th>Gambar</th>
+                    <th>Barcode</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -67,6 +67,9 @@
                                 Belum Ada Gambar
                             @endif
                         </td>
+                        <td>
+                            {!!  DNS1D::getBarcodeHTML($v->barcode, 'CODABAR') !!}
+                        </td>
                         <td style="width: 150px">
                             <button type="button" class="btn btn-success btn-sm btn-edit"
                                     data-id="{{ $v->id }}"
@@ -82,7 +85,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="text-center" colspan="7">
+                        <td class="text-center" colspan="8">
                             Tidak Ada Data Barang
                         </td>
                     </tr>
@@ -224,6 +227,10 @@
 
             $('.btn-hapus').on('click', function () {
                 hapus(this.dataset.id)
+            })
+
+            $('#addData').on('click', function () {
+                $('#modal').modal('show');
             })
         });
 
