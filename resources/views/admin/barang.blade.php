@@ -220,6 +220,11 @@
                 $('#modal-edit').modal('show')
             });
 
+            $('#addData').on('click', function () {
+                $('#modal').modal('show')
+            });
+            
+
             $('.btn-hapus').on('click', function () {
                 hapus(this.dataset.id)
             })
