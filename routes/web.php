@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::match(['get', 'post'],'/', [AuthController::class, 'index']);
+Route::match(['get', 'post'],'/logout', [AuthController::class, 'logout']);
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/', function () {
         return view('admin.dashboard');
