@@ -14,8 +14,8 @@
 
     <section class="m-2">
         <div class="table-container">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5>Data Stock Barang</h5>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <h5>Data Barang Keluar</h5>
                 {{-- <button type="button" class="btn btn-primary btn-sm ms-auto" id="addData">Tambah Data
                 </button> --}}
                 <div class="ms-auto">
@@ -26,23 +26,39 @@
                                     name="cabang">
                                 <option value="">Semua</option>
                                 @foreach($cabang as $item)
-                                    <option value="{{ $item->id }}" {{ auth()->user()->cabang_id === $item->id ? 'selected' :'' }}>{{ $item->nama }}</option>
+                                    <option
+                                        value="{{ $item->id }}" {{ auth()->user()->cabang_id === $item->id ? 'selected' :'' }}>{{ $item->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                 </div>
             </div>
-
-
+            <div class="d-flex align-items-end mb-3">
+                <div class="me-2 ms-2">
+                    <label for="kategori" class="form-label">Periode</label>
+                    <div class="input-group input-daterange">
+                        <input type="text" class="form-control me-2 txt-tgl" name="start" id="start"
+                               style="background-color: white; line-height: 2.0;" readonly
+                               value="{{ date('d-m-Y') }}" required>
+                        <div class="input-group-addon">to</div>
+                        <input type="text" class="form-control ms-2 txt-tgl" name="end" id="end"
+                               style="background-color: white; line-height: 2.0;" readonly
+                               value="{{ date('d-m-Y') }}" required>
+                    </div>
+                </div>
+                <a class="btn btn-warning" id="cetak" target="_blank" href="#">Cetak</a>
+            </div>
             <table class="table table-striped table-bordered w-100" id="myTable">
                 <thead>
                 <tr>
                     <th>#</th>
                     <th>Nama Barang</th>
                     <th>Jenis Barang</th>
-                    <th>Satuan</th>
-                    <th>Stock</th>
+                    <th>Tanggal</th>
+                    <th>Qty</th>
+                    <th>Keterangan</th>
+                    <th>Cabang</th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -104,25 +120,31 @@
 @section('script')
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.min.js"></script>
     <script>
+        $('.input-daterange input').each(function () {
+            $(this).datepicker({
+                format: "dd-mm-yyyy"
+            });
+        });
         var table;
 
         function reload() {
             table.ajax.reload();
         }
 
-        $(document).ready(function () {
-
+        function loadTable() {
             table = $('#myTable').DataTable({
                 scrollX: true,
                 processing: true,
                 ajax: {
-                    url: '/admin/stock/list',
+                    url: '/admin/laporan-barang-keluar/list',
                     type: 'GET',
                     'data': function (d) {
                         return $.extend(
                             {},
                             d,
                             {
+                                'start': $('#start').val(),
+                                'end': $('#end').val(),
                                 'cabang': $('#cabang').val(),
                             }
                         );
@@ -152,22 +174,12 @@
                             return meta.row + 1;
                         }
                     },
-                    {data: "nama"},
-                    {data: "jenis.nama"},
-                    {data: "satuan"},
-                    {
-                        data: null, render: function (data, type, row, meta) {
-                            let cabang = $('#cabang').val();
-                            if(cabang === '') {
-                                return data['total_stock'];
-                            }
-                            let stock = data['stock'];
-                            if(stock !== null) {
-                                return data['stock']['qty'];
-                            }
-                            return 0;
-                        }
-                    },
+                    {data: "barang.nama"},
+                    {data: "barang.jenis.nama"},
+                    {data: "tanggal"},
+                    {data: "qty"},
+                    {data: "keterangan"},
+                    {data: "cabang.nama"},
                     // {
                     //     data: null, render: function (data, type, row, meta) {
                     //         return '<a href="#" class="btn btn-primary btn-sm text-white btn-detail" data-id="' + data['id'] + '">Log Barang</a>';
@@ -179,9 +191,23 @@
             table.on('draw', function () {
                 console.log('redraw table')
             })
+        }
 
-            $('#cabang').on('change',  function () {
+        $(document).ready(function () {
+            loadTable();
+            $('#cabang').on('change', function () {
                 reload();
+            });
+            $('.txt-tgl').on('change', function () {
+                reload();
+            });
+
+            $('#cetak').on('click', function (e) {
+                e.preventDefault();
+                let start = $('#start').val();
+                let end = $('#end').val();
+                let cabang = $('#cabang').val();
+                window.open('/admin/laporan-barang-keluar/print?start=' + start + '&end=' + end + '&cabang=' + cabang, '_blank');
             });
         });
 
