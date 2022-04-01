@@ -34,3 +34,7 @@ Route::group(['prefix' => 'barang-keluar', 'middleware' => 'auth:api'], function
 Route::group(['prefix' => 'barang-masuk', 'middleware' => 'auth:api'], function () {
     Route::match(['post', 'get'], '/', [\App\Http\Controllers\Api\BarangMasukController::class, 'index']);
 });
+
+Route::group(['prefix' => 'profil', 'middleware' => 'auth:api'], function () {
+    Route::match(['post', 'get'], '/', [\App\Http\Controllers\Api\ProfileController::class, 'index']);
+});
