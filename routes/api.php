@@ -21,7 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 });
-
+Route::group(['prefix' => 'scanbarcode', 'middleware' => 'auth:api'], function () {
+    Route::get('/', [\App\Http\Controllers\Api\BarangController::class, 'scanbarcode']);
+});
 Route::group(['prefix' => 'barang', 'middleware' => 'auth:api'], function () {
     Route::get('/', [\App\Http\Controllers\Api\BarangController::class, 'index']);
     Route::get('/{id}', [\App\Http\Controllers\Api\BarangController::class, 'detail']);
